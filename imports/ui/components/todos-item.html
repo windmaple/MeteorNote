@@ -5,7 +5,9 @@
       <span class="checkbox-custom"></span>
     </label>
 
-    <input type="text" value="{{todo.text}}" placeholder={{_ 'Task name'}}>
+    <!-- TODO: there is a bug somewhere, where the todo UI immediately updates itself once you type a character
+    'readonly' is a skunky workaround -->
+    <input type="text" value="{{todo.text}}" placeholder={{_ 'Task name'}} readonly>
     <a class="js-delete-item delete-item" href="#">
       <span class="icon-trash"></span>
     </a>

@@ -20,7 +20,13 @@
 
           <h1 class="js-edit-list title-page">
             <span class="title-wrapper">{{list.name}}</span>
-            <span class="count-list">{{list.incompleteCount}}</span>
+            {{#if isTodo list.type}}
+              {{#if list.incompleteCount}}
+                <span class="count-list">{{list.incompleteCount}}</span>
+              {{else}}
+                <span class="count-list">{{_ '0'}}</span>
+              {{/if}}
+            {{/if}}
           </h1>
 
           <div class="nav-group right">
@@ -53,28 +59,40 @@
         {{/if}}
       {{/momentum}}
 
-      <form class="js-todo-new todo-new input-symbol">
-        <input type="text" placeholder={{_ 'Type to add new tasks'}}>
-        <span class="icon-add js-todo-add"></span>
-      </form>
+      {{#if isTodo list.type}}
+        <form class="js-todo-new todo-new input-symbol">
+          <input type="text" placeholder={{_ 'Type to add new tasks'}}>
+          <span class="icon-add js-todo-add"></span>
+        </form>
+      {{/if}}
     </nav>
 
-
-    <div class="content-scrollable list-items">
-      {{#if todosReady}}
-        {{#each todo in todos}}
-          {{> Todos_item (todoArgs todo)}}
+    {{#if isTodo list.type}}
+      <div class="content-scrollable list-items">
+        {{#if todosReady}}
+          {{#each todo in todos}}
+            {{> Todos_item (todoArgs todo)}}
+          {{else}}
+            <div class="wrapper-message">
+              <div class="title-message">{{_ 'No tasks here'}}</div>
+              <div class="subtitle-message">{{_ 'Add new tasks using the field above'}}</div>
+            </div>
+          {{/each}}
         {{else}}
-          <div class="wrapper-message">
-            <div class="title-message">{{_ 'No tasks here'}}</div>
-            <div class="subtitle-message">{{_ 'Add new tasks using the field above'}}</div>
-          </div>
-        {{/each}}
-      {{else}}
-          <div class="wrapper-message">
-            <div class="title-message">{{_ 'Loading tasks...'}}</div>
-          </div>
-      {{/if}}
-    </div>
+            <div class="wrapper-message">
+              <div class="title-message">{{_ 'Loading tasks...'}}</div>
+            </div>
+        {{/if}}
+      </div>
+    {{else}}
+      <!--
+      <div class="content-scrollable" contenteditable="true" style="padding:15px">
+        {{list.content}}
+      </div>
+      -->
+      <div class="content-scrollable">
+        <textarea class="note-content" TextMode="MultiLine" style="padding:15px; height:100%; width:100%;">{{list.content}}</textarea>
+      </div>
+    {{/if}}
   </div>
 </template>

@@ -9,7 +9,8 @@ import { ActiveRoute } from 'meteor/zimme:active-route';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { TAPi18n } from 'meteor/tap:i18n';
 
-import { insert } from '../../api/lists/methods.js';
+import { insert_todo } from '../../api/lists/methods.js';
+import { insert_note } from '../../api/lists/methods.js';
 
 import '../components/loading.js';
 
@@ -58,8 +59,14 @@ Template.App_body.helpers({
     const instance = Template.instance();
     return instance.state.get('userMenuOpen');
   },
-  lists() {
-    return Lists.find({ $or: [
+  lists_todos() {
+    return Lists.find({ type: 'todo', $or: [
+      { userId: { $exists: false } },
+      { userId: Meteor.userId() },
+    ] });
+  },
+  lists_notes() {
+    return Lists.find({ type: 'note', $or: [
       { userId: { $exists: false } },
       { userId: Meteor.userId() },
     ] });
@@ -120,8 +127,22 @@ Template.App_body.events({
     }
   },
 
-  'click .js-new-list'() {
-    const listId = insert.call((err) => {
+  'click .js-new-list-todo'() {
+    const listId = insert_todo.call((err) => {
+      if (err) {
+        // At this point, we have already redirected to the new list page, but
+        // for some reason the list didn't get created. This should almost never
+        // happen, but it's good to handle it anyway.
+        FlowRouter.go('App.home');
+        alert(TAPi18n.__('Could not create list.')); // eslint-disable-line no-alert
+      }
+    });
+
+    FlowRouter.go('Lists.show', { _id: listId });
+  },
+
+  'click .js-new-list-note'() {
+    const listId = insert_note.call((err) => {
       if (err) {
         // At this point, we have already redirected to the new list page, but
         // for some reason the list didn't get created. This should almost never

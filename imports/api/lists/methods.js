@@ -10,11 +10,19 @@ const LIST_ID_ONLY = new SimpleSchema({
   listId: { type: String },
 }).validator();
 
-export const insert = new ValidatedMethod({
-  name: 'lists.insert',
+export const insert_todo = new ValidatedMethod({
+  name: 'lists.insert_todo',
   validate: new SimpleSchema({}).validator(),
   run() {
-    return Lists.insert({});
+    return Lists.insert_todo({});
+  },
+});
+
+export const insert_note = new ValidatedMethod({
+  name: 'lists.insert_note',
+  validate: new SimpleSchema({}).validator(),
+  run() {
+    return Lists.insert_note({});
   },
 });
 
@@ -87,6 +95,29 @@ export const updateName = new ValidatedMethod({
   },
 });
 
+export const updateContent = new ValidatedMethod({
+  name: 'lists.updateContent',
+  validate: new SimpleSchema({
+    listId: { type: String },
+    newContent: { type: String },
+  }).validator(),
+  run({ listId, newContent }) {
+    const list = Lists.findOne(listId);
+
+    if (!list.editableBy(this.userId)) {
+      throw new Meteor.Error('lists.updateContent.accessDenied',
+          'You don\'t have permission to edit this list.');
+    }
+
+    // XXX the security check above is not atomic, so in theory a race condition could
+    // result in exposing private data
+
+    Lists.update(listId, {
+      $set: { content: newContent },
+    });
+  },
+});
+
 export const remove = new ValidatedMethod({
   name: 'lists.remove',
   validate: LIST_ID_ONLY,
@@ -112,7 +143,8 @@ export const remove = new ValidatedMethod({
 
 // Get list of all method names on Lists
 const LISTS_METHODS = _.pluck([
-  insert,
+  insert_todo,
+  insert_note,
   makePublic,
   makePrivate,
   updateName,

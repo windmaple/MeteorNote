@@ -4,6 +4,7 @@ import { Mongo } from 'meteor/mongo';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Tracker } from 'meteor/tracker';
 import { $ } from 'meteor/jquery';
+import { _ } from 'meteor/underscore';
 
 import './lists-show.html';
 
@@ -12,6 +13,7 @@ import './todos-item.js';
 
 import {
   updateName,
+  updateContent,
   makePublic,
   makePrivate,
   remove,
@@ -106,6 +108,9 @@ Template.Lists_show.helpers({
     const instance = Template.instance();
     return instance.state.get('editing');
   },
+  isTodo(type) {
+    return type === 'todo';
+  }
 });
 
 Template.Lists_show.events({
@@ -120,6 +125,13 @@ Template.Lists_show.events({
       $(event.target).blur();
     }
   },
+
+  'keyup textarea[class="note-content"]': _.throttle(function notesItemKeyUpInner(event) {
+    updateContent.call({
+      listId: this.list()._id,
+      newContent: event.target.value,
+    });
+  }, 300),
 
   'blur input[type=text]'(event, instance) {
     // if we are still editing (we haven't just clicked the cancel button)

@@ -2,9 +2,10 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Factory } from 'meteor/factory';
 import { Todos } from '../todos/todos.js';
+import { Notes } from '../notes/notes.js';
 
 class ListsCollection extends Mongo.Collection {
-  insert(list, callback) {
+  insert_todo(list, callback) {
     const ourList = list;
     if (!ourList.name) {
       let nextLetter = 'A';
@@ -16,12 +17,34 @@ class ListsCollection extends Mongo.Collection {
         ourList.name = `List ${nextLetter}`;
       }
     }
-
+    ourList.type = 'todo';
     return super.insert(ourList, callback);
   }
+
+  insert_note(list, callback) {
+    const ourList = list;
+    if (!ourList.name) {
+      let nextLetter = 'A';
+      ourList.name = `Note ${nextLetter}`;
+
+      while (!!this.findOne({ name: ourList.name })) {
+        // not going to be too smart here, can go past Z
+        nextLetter = String.fromCharCode(nextLetter.charCodeAt(0) + 1);
+        ourList.name = `Note ${nextLetter}`;
+      }
+    }
+    ourList.type = 'note';
+    return super.insert(ourList, callback);
+  }
+
   remove(selector, callback) {
     Todos.remove({ listId: selector });
     return super.remove(selector, callback);
+  }
+
+  update(selector, modifier) {
+    const result = super.update(selector, modifier);
+    return result;
   }
 }
 
@@ -36,7 +59,9 @@ Lists.deny({
 
 Lists.schema = new SimpleSchema({
   name: { type: String },
-  incompleteCount: { type: Number, defaultValue: 0 },
+  type: { type: String, max: 4 },
+  incompleteCount: { type: Number, optional: true },
+  content: {type: String, max: 10000, optional: true },
   userId: { type: String, regEx: SimpleSchema.RegEx.Id, optional: true },
 });
 
@@ -47,7 +72,9 @@ Lists.attachSchema(Lists.schema);
 // them here to keep them private to the server.
 Lists.publicFields = {
   name: 1,
+  type: 1,
   incompleteCount: 1,
+  content: 1,
   userId: 1,
 };
 

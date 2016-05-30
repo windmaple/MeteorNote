@@ -7,9 +7,9 @@ import './todos-item.html';
 import { Todos } from '../../api/todos/todos.js';
 
 import {
-  setCheckedStatus,
-  updateText,
-  remove,
+    setCheckedStatus,
+    updateText,
+    remove,
 } from '../../api/todos/methods.js';
 
 import { displayError } from '../lib/errors.js';
