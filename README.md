@@ -1,4 +1,4 @@
-This simple app extends the functionality of Meteor's Todo example. 
+This simple app extends the functionality of Meteor's Todo example by adding note-taking capability.
 
 ### Running the app
 
