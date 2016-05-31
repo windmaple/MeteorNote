@@ -1,4 +1,6 @@
 {
+  "engines": {
+    "node": "0.10.41"
   "scripts": {
     "pretest": "npm run lint --silent",
     "test": "meteor test --once --driver-package dispatch:mocha-phantomjs",
