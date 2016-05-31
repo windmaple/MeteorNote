@@ -1,4 +1,5 @@
 {
+  "name": "meteornote",
   "engines": {
     "node": "6.0.0"
   },
@@ -53,5 +54,20 @@
         ]
       }
     }
-  }
+  },
+  "description": "This simple app extends the functionality of Meteor's Todo example by adding note-taking capability.",
+  "version": "0.1.0",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/windmaple/MeteorNote.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/windmaple/MeteorNote/issues"
+  },
+  "homepage": "https://github.com/windmaple/MeteorNote"
 }
