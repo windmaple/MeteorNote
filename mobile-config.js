@@ -2,6 +2,7 @@
 /* eslint-disable quote-props */
 
 App.info({
+  id: "com.heroku.meteornote",
   name: 'MeteorNote',
   description: 'A simple todo list and note-taking app built in Meteor.',
   author: 'windmaple',
